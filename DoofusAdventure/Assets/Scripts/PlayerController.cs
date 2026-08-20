@@ -10,6 +10,10 @@ public class PlayerController : MonoBehaviour
     public Animator characterAnimator;
     public float turnSpeed = 15f;
 
+    //Audio variables for footsteps and landing
+    public AudioSource audioSource;
+    public AudioClip[] stepSounds;
+
     private void Start()
     {
         //Fetching speed strictly from the JSON GameManager
@@ -115,6 +119,32 @@ public class PlayerController : MonoBehaviour
                 pulpitScript.hasBeenScored = true;
                 GameManager.Instance.AddScore();
             }
+        }
+    }
+
+    //This plays a random step sound
+    public void PlayStepSound()
+    {
+        if (stepSounds.Length > 0 && audioSource != null)
+        {
+            //Grabbing a random sound out of the 5
+            int randomIndex = Random.Range(0, stepSounds.Length);
+            
+            //Playing the sound
+            audioSource.PlayOneShot(stepSounds[randomIndex], 0.05f);
+        }
+    }
+
+    //This plays a random land sound
+    public void PlayLandSound()
+    {
+        if (stepSounds.Length > 0 && audioSource != null)
+        {
+            //Grabbing a random sound out of the 5
+            int randomIndex = Random.Range(0, stepSounds.Length);
+            
+            //Playing the sound
+            audioSource.PlayOneShot(stepSounds[randomIndex], 0.2f);
         }
     }
 }
