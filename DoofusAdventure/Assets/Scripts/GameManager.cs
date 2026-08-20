@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -13,6 +14,17 @@ public class GameManager : MonoBehaviour
     //Score tracking variables
     public int currentScore = 0;
     public TextMeshProUGUI scoreText;
+
+    //UI screen references
+    public GameObject startScreen;
+    public GameObject gameOverScreen;
+
+    //Controls whether scripts should run
+    public bool isGameActive { get; private set; } = false;
+
+    //This will start the game directly instead of going to the start menu.
+    //Its for when the player restarts the game after losing
+    private static bool autoStart = false;
 
     private void Awake()
     {
@@ -27,6 +39,22 @@ public class GameManager : MonoBehaviour
         }
 
         LoadGameData();
+    }
+
+    private void Start()
+    {
+        //If we hit restart previously, it will skip the menu and jump right in
+        if(autoStart)
+        {
+            autoStart = false;
+            StartGame();
+        }
+        else
+        {
+            //Set up initial UI state
+            startScreen.SetActive(true);
+            gameOverScreen.SetActive(false);
+        }
     }
 
     private void LoadGameData() 
@@ -49,5 +77,32 @@ public class GameManager : MonoBehaviour
         {
             scoreText.text = "Score:\n" + currentScore;
         }
+    }
+
+    //This function starts the game
+    public void StartGame()
+    {
+        isGameActive = true;
+        startScreen.SetActive(false);
+        gameOverScreen.SetActive(false);
+
+        //This will tell the pulpitManager to spawn the first platform now
+        FindFirstObjectByType<PulpitManager>().SpawnInitialPulpit();
+    }
+
+    //This function stops the game
+    public void TriggerGameOver()
+    {
+        isGameActive = false;
+        gameOverScreen.SetActive(true);
+    }
+
+    //This function restarts the game
+    public void RestartGame()
+    {
+        //Tell the next scene load to skip the Start Menu
+        autoStart = true;
+        
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }

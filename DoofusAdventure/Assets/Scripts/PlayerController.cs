@@ -16,6 +16,9 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
+        //Stops processing input if the game is over or on start menu
+        if(!GameManager.Instance.isGameActive) return;
+
         // Capture input exactly when the player presses it
         float h = Input.GetAxisRaw("Horizontal");
         float v = Input.GetAxisRaw("Vertical");
@@ -24,13 +27,16 @@ public class PlayerController : MonoBehaviour
         // Fall detection
         if (transform.position.y < -2f)
         {
-            // GameManager.Instance.TriggerGameOver();
+            GameManager.Instance.TriggerGameOver();
             Debug.Log("Doofus fell! Game Over.");
         }
     }
 
     private void FixedUpdate()
     {
+        //Stops processing physics movement if the game is over or on start menu
+        if(!GameManager.Instance.isGameActive) return;
+
         //If Doofus slips off the edge (Y position drops below 0.6), 
         //disable horizontal movement.
         if (transform.position.y < 0.6f) 

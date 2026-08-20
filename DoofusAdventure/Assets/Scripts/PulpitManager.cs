@@ -7,7 +7,7 @@ public class PulpitManager : MonoBehaviour
     // Track the previous position to completely prevent backtracking/overlapping
     private Vector3 previousPos = new Vector3(999f, 999f, 999f); 
 
-    private void Start()
+    public void SpawnInitialPulpit()
     {
         //Placing the first platform at the center. 
         //This will trigger a chain reaction that will keep spawning new platforms.

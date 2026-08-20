@@ -38,6 +38,9 @@ public class Pulpit : MonoBehaviour
 
     private void Update()
     {
+        //Stops counting down if the game is over
+        if(!GameManager.Instance.isGameActive) return;
+
         //If pulpit already shrinking and about to be destroyed, this stops running the timer logic
         if(isShrinking) return;
 
