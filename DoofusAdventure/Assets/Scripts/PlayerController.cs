@@ -6,6 +6,10 @@ public class PlayerController : MonoBehaviour
     private Rigidbody rb;
     private Vector3 movement;
 
+    // My character's animator and how fast he spins around
+    public Animator characterAnimator;
+    public float turnSpeed = 15f;
+
     private void Start()
     {
         // Fetching speed strictly from the JSON GameManager
@@ -26,6 +30,12 @@ public class PlayerController : MonoBehaviour
             {
                 rb.useGravity = false;
                 rb.linearVelocity = Vector3.zero;
+
+                // Stopping the animations when the game ends
+                if (characterAnimator != null)
+                {
+                    characterAnimator.speed = 0f;
+                }
             }
             return;
         }
@@ -34,12 +44,38 @@ public class PlayerController : MonoBehaviour
         if(!rb.useGravity)
         {
             rb.useGravity = true;
+
+            if (characterAnimator != null)
+            {
+                characterAnimator.speed = 1f;
+
+                //This will force the spawn animation to play from the very beginning
+                characterAnimator.Play("Spawn_Air", -1, 0f);
+            }
         }
 
         // Capture input exactly when the player presses it
         float h = Input.GetAxisRaw("Horizontal");
         float v = Input.GetAxisRaw("Vertical");
         movement = new Vector3(h, 0, v).normalized;
+
+        // Updating the animator variables and rotation
+        if (characterAnimator != null)
+        {
+            // Passing the movement magnitude to trigger the walk animation
+            characterAnimator.SetFloat("Speed", movement.magnitude);
+            
+            // Only trigger the fall animation if he slips below the top of the pulpit
+            bool hasFallenOff = transform.position.y < 0.4f;
+            characterAnimator.SetBool("IsFalling", hasFallenOff);
+
+            // Making the character actually look where he is going
+            if (movement != Vector3.zero)
+            {
+                Quaternion targetRotation = Quaternion.LookRotation(movement);
+                characterAnimator.transform.rotation = Quaternion.Slerp(characterAnimator.transform.rotation, targetRotation, turnSpeed * Time.deltaTime);
+            }
+        }
 
         // Fall detection
         if (transform.position.y < -2f)
