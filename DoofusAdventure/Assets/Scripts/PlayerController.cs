@@ -12,12 +12,29 @@ public class PlayerController : MonoBehaviour
         speed = GameManager.Instance.ConfigData.player_data.speed;
 
         rb = GetComponent<Rigidbody>();
+
+        //This prevents the player from falling at the start of the game
+        rb.useGravity = false;
     }
 
     private void Update()
     {
         //Stops processing input if the game is over or on start menu
-        if(!GameManager.Instance.isGameActive) return;
+        if(!GameManager.Instance.isGameActive)
+        {
+            if(rb.useGravity)
+            {
+                rb.useGravity = false;
+                rb.linearVelocity = Vector3.zero;
+            }
+            return;
+        }
+
+        //Turns gravity back on when the game starts
+        if(!rb.useGravity)
+        {
+            rb.useGravity = true;
+        }
 
         // Capture input exactly when the player presses it
         float h = Input.GetAxisRaw("Horizontal");
