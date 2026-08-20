@@ -6,8 +6,7 @@ public class Pulpit : MonoBehaviour
     private float lifetime;
     private float spawnNextTimer;
     private bool hasSpawnedNext = false;
-
-    // NEW: A slot to hold our floating 3D text
+    public bool hasBeenScored = false;
     public TextMeshPro timerText;
 
     //An event that requests the Manager to spawn the next platform

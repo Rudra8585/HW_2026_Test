@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using TMPro;
 
 public class GameManager : MonoBehaviour
 {
@@ -8,6 +9,10 @@ public class GameManager : MonoBehaviour
 
     //The variable holding all the JSON data
     public GameConfig ConfigData { get; private set; }
+
+    //Score tracking variables
+    public int currentScore = 0;
+    public TextMeshProUGUI scoreText;
 
     private void Awake()
     {
@@ -34,9 +39,15 @@ public class GameManager : MonoBehaviour
             ConfigData = JsonUtility.FromJson<GameConfig>(jsonFile.text);
             Debug.Log("JSON file loaded");
         }
-        else
+    }
+
+    //The player calls this function when it lands on a new platform
+    public void AddScore()
+    {
+        currentScore++;
+        if(scoreText != null) 
         {
-            Debug.LogError("Could not find doofus_diary.json");
+            scoreText.text = "Score:\n" + currentScore;
         }
     }
 }

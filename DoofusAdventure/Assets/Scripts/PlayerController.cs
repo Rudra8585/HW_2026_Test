@@ -5,13 +5,12 @@ public class PlayerController : MonoBehaviour
     private float speed;
     private Rigidbody rb;
     private Vector3 movement;
-    private Transform lastPulpitTouched;
 
     private void Start()
     {
         // Fetching speed strictly from the JSON GameManager
         speed = GameManager.Instance.ConfigData.player_data.speed;
-        
+
         rb = GetComponent<Rigidbody>();
     }
 
@@ -25,7 +24,6 @@ public class PlayerController : MonoBehaviour
         // Fall detection
         if (transform.position.y < -2f)
         {
-            // I will uncomment this after building the Game Over UI!
             // GameManager.Instance.TriggerGameOver();
             Debug.Log("Doofus fell! Game Over.");
         }
@@ -42,5 +40,22 @@ public class PlayerController : MonoBehaviour
 
         Vector3 newPosition = rb.position + movement * speed * Time.fixedDeltaTime;
         rb.MovePosition(newPosition);
+    }
+
+    //Calling the AddScore function on collision with a new pulpit
+    private void OnCollisionEnter(Collision collision)
+    {
+        if(collision.gameObject.CompareTag("Pulpit"))
+        {   
+            //This grabs the pulpit script from the pulpit we just hit
+            Pulpit pulpitScript = collision.gameObject.GetComponent<Pulpit>();
+
+            //If it hasnt been scored yet, a point is added
+            if(pulpitScript != null && !pulpitScript.hasBeenScored)
+            {
+                pulpitScript.hasBeenScored = true;
+                GameManager.Instance.AddScore();
+            }
+        }
     }
 }
