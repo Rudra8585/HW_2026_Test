@@ -18,10 +18,18 @@ public class Pulpit : MonoBehaviour
     private float animDuration = 0.3f;
     private bool isShrinking = false;
 
+    [Header("Nature Decorations")]
+    //Arrays to hold the 3d models and the 9 empty game objects on the cubes
+    public GameObject[] naturePrefabs; 
+    public Transform[] spawnPoints;
+
     private void Start()
     {
         //Save the platform's original size(9, 0.5, 9)
         originalScale = transform.localScale;
+
+        //Spawns the random bushes and grass
+        SpawnDecorations();
 
         //Immediately shrinks it to 0 so its invisible on frame 1
         transform.localScale = Vector3.zero;
@@ -71,6 +79,37 @@ public class Pulpit : MonoBehaviour
         }
     }
 
+    private void SpawnDecorations()
+    {
+        //Chooses how many props to spawn on this specific pulpit
+        int propCount = Random.Range(4, 10); 
+
+        for (int i = 0; i < propCount; i++)
+        {
+            //Picks a random model from the array
+            int randomIndex = Random.Range(0, naturePrefabs.Length);
+            
+            //Spawns the chosen model
+            GameObject decor = Instantiate(naturePrefabs[randomIndex], transform.position, Quaternion.identity, transform);
+            
+            //Places it at a random local location on the 9x9 grid
+            //X and Z are between -0.48 and 0.48 so they stay slightly inside the absolute edges
+            float randomX = Random.Range(-0.48f, 0.48f);
+            float randomZ = Random.Range(-0.48f, 0.48f);
+            
+            decor.transform.localPosition = new Vector3(randomX, 0.39f, randomZ); 
+            
+            //Spins the model randomly so they dont look completely identical
+            decor.transform.localRotation = Quaternion.Euler(0, Random.Range(0f, 360f), 0);
+
+            //Chooses a random uniform size for the prop
+            float randomSize = Random.Range(0.9f, 1.5f); 
+            
+            //Counteracts the parent's 9, 0.5, 9 scale so the props dont flatten
+            decor.transform.localScale = new Vector3(randomSize / 9f, randomSize / 0.5f, randomSize / 9f);
+        }
+    }
+
     //Animation Coroutines:
     private IEnumerator GrowRoutine()
     {
@@ -83,7 +122,7 @@ public class Pulpit : MonoBehaviour
             yield return null; 
         }
         
-        // Ensure it snaps exactly to its full size at the very end
+        //Ensure it snaps exactly to its full size at the very end
         transform.localScale = originalScale; 
     }
 
@@ -99,7 +138,7 @@ public class Pulpit : MonoBehaviour
             yield return null;
         }
         
-        // Once the animation finishes, cleanly destroy the object
+        //Once the animation finishes, cleanly destroy the object
         Destroy(gameObject);
     }
 }

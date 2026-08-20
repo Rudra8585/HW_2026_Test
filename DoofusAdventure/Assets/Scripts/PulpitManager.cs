@@ -4,7 +4,7 @@ public class PulpitManager : MonoBehaviour
 {
     public Pulpit pulpitPrefab;
     
-    // Track the previous position to completely prevent backtracking/overlapping
+    //Track the previous position to completely prevent backtracking/overlapping
     private Vector3 previousPos = new Vector3(999f, 999f, 999f); 
 
     public void SpawnInitialPulpit()
@@ -37,7 +37,7 @@ public class PulpitManager : MonoBehaviour
         Vector3 newPos = Vector3.zero;
         bool validPosition = false;
 
-        // A while loop to reroll the direction if it tries to spawn on the old platform
+        //A while loop to reroll the direction if it tries to spawn on the old platform
         while (!validPosition)
         {
             Vector3 randomDir = directions[Random.Range(0, directions.Length)];
@@ -45,14 +45,14 @@ public class PulpitManager : MonoBehaviour
             //Multiply by 9 to place it perfectly adjacent to a 9x9 platform
             newPos = currentPos + (randomDir * 9f);
             
-            // Only checking to prevent backtracking
+            //Only checking to prevent backtracking
             if (newPos != previousPos)
             {
                 validPosition = true;
             }
         }
 
-        // Save the current position as the new "previous" position before spawning
+        //Save the current position as the new "previous" position before spawning
         previousPos = currentPos;
         SpawnPulpit(newPos);
     }

@@ -6,13 +6,13 @@ public class PlayerController : MonoBehaviour
     private Rigidbody rb;
     private Vector3 movement;
 
-    // My character's animator and how fast he spins around
+    //My character's animator and how fast he spins around
     public Animator characterAnimator;
     public float turnSpeed = 15f;
 
     private void Start()
     {
-        // Fetching speed strictly from the JSON GameManager
+        //Fetching speed strictly from the JSON GameManager
         speed = GameManager.Instance.ConfigData.player_data.speed;
 
         rb = GetComponent<Rigidbody>();
@@ -31,7 +31,7 @@ public class PlayerController : MonoBehaviour
                 rb.useGravity = false;
                 rb.linearVelocity = Vector3.zero;
 
-                // Stopping the animations when the game ends
+                //Stopping the animations when the game ends
                 if (characterAnimator != null)
                 {
                     characterAnimator.speed = 0f;
@@ -54,22 +54,22 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        // Capture input exactly when the player presses it
+        //Capture input exactly when the player presses it
         float h = Input.GetAxisRaw("Horizontal");
         float v = Input.GetAxisRaw("Vertical");
         movement = new Vector3(h, 0, v).normalized;
 
-        // Updating the animator variables and rotation
+        //Updating the animator variables and rotation
         if (characterAnimator != null)
         {
-            // Passing the movement magnitude to trigger the walk animation
+            //Passing the movement magnitude to trigger the walk animation
             characterAnimator.SetFloat("Speed", movement.magnitude);
             
-            // Only trigger the fall animation if he slips below the top of the pulpit
+            //Only trigger the fall animation if he slips below the top of the pulpit
             bool hasFallenOff = transform.position.y < 0.4f;
             characterAnimator.SetBool("IsFalling", hasFallenOff);
 
-            // Making the character actually look where he is going
+            //Making the character actually look where he is going
             if (movement != Vector3.zero)
             {
                 Quaternion targetRotation = Quaternion.LookRotation(movement);
@@ -77,7 +77,7 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        // Fall detection
+        //Fall detection
         if (transform.position.y < -2f)
         {
             GameManager.Instance.TriggerGameOver();
