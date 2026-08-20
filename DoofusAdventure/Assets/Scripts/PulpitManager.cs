@@ -3,6 +3,9 @@ using UnityEngine;
 public class PulpitManager : MonoBehaviour
 {
     public Pulpit pulpitPrefab;
+    
+    // Track the previous position to completely prevent backtracking/overlapping
+    private Vector3 previousPos = new Vector3(999f, 999f, 999f); 
 
     private void Start()
     {
@@ -31,11 +34,26 @@ public class PulpitManager : MonoBehaviour
     {
         //4 possible directions in 3D space
         Vector3[] directions = { Vector3.forward, Vector3.back, Vector3.left, Vector3.right };
-        Vector3 randomDir = directions[Random.Range(0, directions.Length)];
+        Vector3 newPos = Vector3.zero;
+        bool validPosition = false;
 
-        //Multiply by 9 to place it perfectly adjacent to a 9x9 platform
-        Vector3 newPos = currentPos + (randomDir * 9f);
+        // A while loop to reroll the direction if it tries to spawn on the old platform
+        while (!validPosition)
+        {
+            Vector3 randomDir = directions[Random.Range(0, directions.Length)];
+            
+            //Multiply by 9 to place it perfectly adjacent to a 9x9 platform
+            newPos = currentPos + (randomDir * 9f);
+            
+            // Only checking to prevent backtracking
+            if (newPos != previousPos)
+            {
+                validPosition = true;
+            }
+        }
 
+        // Save the current position as the new "previous" position before spawning
+        previousPos = currentPos;
         SpawnPulpit(newPos);
     }
 }
