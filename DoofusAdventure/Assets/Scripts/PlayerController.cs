@@ -131,7 +131,7 @@ public class PlayerController : MonoBehaviour
             int randomIndex = Random.Range(0, stepSounds.Length);
             
             //Playing the sound
-            audioSource.PlayOneShot(stepSounds[randomIndex], 0.05f);
+            audioSource.PlayOneShot(stepSounds[randomIndex], 0.08f);
         }
     }
 
