@@ -944,6 +944,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 823e36557cce24947a2f21e7e4f9bdce, type: 3}
   - {fileID: 8300000, guid: c99eccb36c8ddfe4bbdde080fb795218, type: 3}
   - {fileID: 8300000, guid: 3c454b4580c7d144883da091a76de0d8, type: 3}
+  coyoteTimeDuration: 0.2
 --- !u!54 &745504768
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -952,7 +953,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 745504766}
   serializedVersion: 5
-  m_Mass: 0.1
+  m_Mass: 1
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}

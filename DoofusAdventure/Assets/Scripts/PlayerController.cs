@@ -14,6 +14,11 @@ public class PlayerController : MonoBehaviour
     public AudioSource audioSource;
     public AudioClip[] stepSounds;
 
+    [Header("Coyote Time")]
+    //The grace period allowed after slipping off an edge
+    public float coyoteTimeDuration = 0.2f; 
+    private float coyoteTimeCounter;
+
     private void Start()
     {
         //Fetching speed strictly from the JSON GameManager
@@ -94,14 +99,43 @@ public class PlayerController : MonoBehaviour
         //Stops processing physics movement if the game is over or on start menu
         if(!GameManager.Instance.isGameActive) return;
 
-        //If Doofus slips off the edge (Y position drops below 0.6), 
-        //disable horizontal movement.
-        if (transform.position.y < 0.6f) 
+        //Ground check using a raycast
+        float laserLength = 0.6f;
+        bool isGrounded = Physics.Raycast(transform.position, Vector3.down, laserLength);
+
+        //Coyote time logic
+        if (isGrounded) 
+        {
+            //Reset the timer if standing on solid ground
+            coyoteTimeCounter = coyoteTimeDuration;
+        }
+        else 
+        {
+            //Start ticking down if the player walked off the edge
+            coyoteTimeCounter -= Time.fixedDeltaTime;
+        }
+
+        //Only completely freeze his horizontal movement if he has fully fallen to his death
+        if (transform.position.y < 0f) 
         {
             return;
         }
 
+        //Calculate the next step
         Vector3 newPosition = rb.position + movement * speed * Time.fixedDeltaTime;
+
+        //Floating logic
+        //Allow the player to walk on air if the Coyote timer is greater than 0
+        if (!isGrounded && coyoteTimeCounter > 0f)
+        {
+            //Lift the player slightly to clear the sharp edge
+            newPosition.y = 0.75f; 
+            
+            //Kill any downward falling momentum while floating
+            rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+        }
+
+        //Apply movement
         rb.MovePosition(newPosition);
     }
 
@@ -127,10 +161,7 @@ public class PlayerController : MonoBehaviour
     {
         if (stepSounds.Length > 0 && audioSource != null)
         {
-            //Grabbing a random sound out of the 5
             int randomIndex = Random.Range(0, stepSounds.Length);
-            
-            //Playing the sound
             audioSource.PlayOneShot(stepSounds[randomIndex], 0.08f);
         }
     }
@@ -140,10 +171,7 @@ public class PlayerController : MonoBehaviour
     {
         if (stepSounds.Length > 0 && audioSource != null)
         {
-            //Grabbing a random sound out of the 5
             int randomIndex = Random.Range(0, stepSounds.Length);
-            
-            //Playing the sound
             audioSource.PlayOneShot(stepSounds[randomIndex], 0.2f);
         }
     }
